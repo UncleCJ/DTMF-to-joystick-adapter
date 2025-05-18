@@ -38,7 +38,6 @@ class HugoJoystick {
   char active, recent;
 };
 
-char DTMF_decode_magnitudes(float*);
 
 // const int n = 481;  // 480 / 4.8 kHz = 100 ms
 const int n = 120;  // ~25 ms, perhaps enough for 697 Hz (the longest period/lowest frequency)
