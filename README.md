@@ -53,6 +53,8 @@ A spectrum calculated from a longer window of samples will have greater frequenc
 To establish some numbers, note that the highest DTMF tone we will care about, the third column is 1477 Hz, so we need at least a sampling frequency of 2954 Hz. The tones are spaced in a particular way to avoid overtones colliding, but the smallest spacing is 73 Hz, requiring at least N = 40 samples or 14 ms sampling window. In practice we will use a bit of margin on that though.  
 When you have little use of the entire spectrum ... 
 
+https://en.wikipedia.org/wiki/Nyquist_frequency
+
 
 ## Goertzel tone detection on arduino
 
