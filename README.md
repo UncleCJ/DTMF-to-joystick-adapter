@@ -92,6 +92,13 @@ DTMF to joystick
 
 ## Circuit
 
+## Stripboard and RetroPie emulator
+
+https://en.wikipedia.org/wiki/Stripboard
+
+![](media/Stripboard_circuit.jpg)
+![](media/Stripboard_retropie_system.jpg)
+
 ## Todo
 
 * raspberry port, self contained emulator
@@ -107,3 +114,4 @@ DTMF to joystick
 * Telephone wire
 * Cruise! Wiring
 * Success!
+* 2025-10: Moderskeppet 4 cruise - Stripboard circuit and RetroPie emulator
