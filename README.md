@@ -65,6 +65,7 @@ Arduino Nano Every / ATMega4809
 ![](media/arduino_nano_every.png)
 
 https://docs.arduino.cc/hardware/nano-every/
+
 https://content.arduino.cc/assets/Nano-Every_processor-48-pin-Data-Sheet-megaAVR-0-series-DS40002016B.pdf
 
 5kHz sampling
@@ -94,9 +95,20 @@ DTMF to joystick
 
 ## Stripboard and RetroPie emulator
 
-https://en.wikipedia.org/wiki/Stripboard
+Frustratingly, the system just barely worked with the Amiga hardware in the first cruise. Main issues were the instability of components on a breadboard, my failed ambition to passively mix the game and DTMF audio and - the noise from the event stage completely drowning out DTMF detection, constantly causing erratic joystick events!
+
+Despite these issues (and the personal associated crippling stress), Hugo nostalgia and the potential of playing it on a phone keypad excited many visitors. Geeks.se (Moderskeppet creators) suggested a "foolproof build" for a subsequent cruise, and so I did not after all let the build perish in fire (nor in the Baltic Sea) but brought it out again to see what could be achieved.
+
+Another pursuit of mine is emulators, including mitigating inefficiencies enough for them to run on otherwise limited resources. The system ought to become more foolproof replacing the, in itself fairly complex, Amiga 500/pistorm/rgb2hdmi hardware with a Raspberry Pi 3 running [RetroPie](https://retropie.org.uk). Amiga emulation may not be as common as other platforms - input configuration is complicated by both joysticks, mouse and keyboard, as well as the requirement to sort out the various BIOS ("kickstart") requirements and "rom" formats (I prefer [WHDLoad](https://docs.libretro.com/library/puae/#whdload_1)). This sorted, Amiga emulation and the Hugo game runs ok using [libretro puae 2021](https://docs.libretro.com/library/puae), notably requiring frameskip to be enabled for the mountain level (probably due to its pseudo-3D scrolling). Noting down the "runcommand" I could add the emulator and Hugo to [retropie/configs/all/autostart.sh](https://retropie.org.uk/docs/FAQ/#how-do-i-boot-to-the-desktop-or-kodi). Finally the [overlay file system](https://www.raspberrypi.com/documentation/computers/configuration.html#overlay-file-system) is enabled to protect the Raspberry Pi from crashes or unintended changes.
+
+To improve the electrical situation I wanted to try [stripboard (veroboard)](https://en.wikipedia.org/wiki/Stripboard) or [perfboard](https://en.wikipedia.org/wiki/Perfboard)...
+
+
+https://en.wikipedia.org/wiki/18650_battery
+
 
 ![](media/Stripboard_circuit.jpg)
+
 ![](media/Stripboard_retropie_system.jpg)
 
 ## Todo
