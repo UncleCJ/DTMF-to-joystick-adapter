@@ -126,4 +126,7 @@ https://en.wikipedia.org/wiki/18650_battery
 * Telephone wire
 * Cruise! Wiring
 * Success!
+* ... various stuff?
 * 2025-10: Moderskeppet 4 cruise - Stripboard circuit and RetroPie emulator
+* ... stuff?
+* 2026-10: Moderskeppet 5 cruise - Still going strong, considering rebuild integrating DTMF detection, USB / mock xinput and perhaps Amiga emulation
