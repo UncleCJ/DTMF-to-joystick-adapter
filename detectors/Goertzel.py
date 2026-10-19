@@ -1,9 +1,9 @@
-from typing import Tuple
 from math import pi as π, cos, sin, pow, sqrt
 from collections.abc import Iterator
-from itertools import islice
+from itertools import islice, count
 from random import randrange
 
+# https://en.wikipedia.org/wiki/Goertzel_algorithm
 class GoertzelDetector:
     _sin_ω : float
     _cos_ω : float
@@ -27,7 +27,7 @@ class GoertzelDetector:
                               self._Q1)
 
     def detect(self) -> float:
-        def complex_results() -> Tuple[float, float]:
+        def complex_results() -> tuple[float, float]:
             return (self._Q1 - self._Q2 * self._cos_ω,
                     self._Q2 * self._sin_ω)
 
@@ -41,10 +41,7 @@ class GoertzelDetector:
 
 if __name__ == "__main__":
     def tone_generator(f_sampling: float, f_tone: float, amplitude: int) -> Iterator[int]:
-        i : float = 0.0
-        while True:
-            yield int(amplitude * sin(2 * π * f_tone * i / f_sampling))
-            i += 1
+        return map(lambda i:int(amplitude * sin(2 * π * f_tone * i / f_sampling)), count())
 
     def random_generator(amplitude: int) -> Iterator[int]:
         while True:
