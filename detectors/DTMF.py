@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import Iterator, Final
 from collections.abc import Sequence
 from math import pi as π, sin
 from itertools import islice, count
@@ -8,56 +8,51 @@ from Goertzel import GoertzelDetector
 
 # https://en.wikipedia.org/wiki/DTMF_signaling
 class DTMFDetector:
-    _row_detectors: tuple[GoertzelDetector, ...]
-    _column_detectors: tuple[GoertzelDetector, ...]
+    _ROW_FREQUENCIES : Final[tuple[float, ...]] = (697.0, 770.0, 852.0, 941.0)
+    _COLUMN_FREQUENCIES : Final[tuple[float, ...]] = (1209.0, 1336.0, 1477.0)
+    _BASIC_KEY_MATRIX : Final[tuple[tuple[str, ...], ...]] = (
+        ("1", "2", "3"), 
+        ("4", "5", "6"), 
+        ("7", "8", "9"), 
+        ("*", "0", "#"))
+    
+    _detectors : tuple[GoertzelDetector, ...]
 
     def __init__(self, 
-                 f_sampling: float,
-                 samples_per_window: int) -> None:
-        def create_detectors(fs : Sequence[float]) -> tuple[GoertzelDetector, ...]:
-            return tuple(
-                GoertzelDetector(f_sampling, f_target, samples_per_window)
-                for f_target in fs)
-
-        f_rows = (697.0, 770.0, 852.0, 941.0)
-        f_columns = (1209.0, 1336.0, 1477.0)
-        self._row_detectors = create_detectors(f_rows)
-        self._column_detectors = create_detectors(f_columns)
+                 f_sampling: float = 5.0e3,
+                 samples_per_window: int = 1000) -> None:
+        self._detectors = tuple(
+            GoertzelDetector(f_sampling, f_target, samples_per_window)
+            for f_target in self._ROW_FREQUENCIES + self._COLUMN_FREQUENCIES)
     
     def process_sample(self, s: int) -> None:
-        for detector in self._row_detectors + self._column_detectors:
+        for detector in self._detectors:
             detector.process_sample(s)
 
     def detect(self) -> str:
-        def detect_list(detectors : Sequence[GoertzelDetector]) -> tuple[float, ...]:
-            return tuple(detector.detect() for detector in detectors)
-            
-        def calculate_density(powers : Sequence[float], p_total : float) -> tuple[int, ...]:
-            return tuple(int(100*p/p_total) for p in powers)
-
-        def detectable_frequency(ρs : Sequence[int], τ : int = 15) -> int:
-            above_τ : Sequence[bool] = tuple(ρ >= τ for ρ in ρs)
+        def detectable_frequency(tone_group_densities : Sequence[int], percentage_threshold : int = 15) -> int:
             detectable_fs : Sequence[int] = tuple(
-                i for i, e
-                in enumerate(above_τ) 
-                if e == True)
+                tone_index
+                for tone_index, is_above_threshold
+                in enumerate(
+                    tone_density >= percentage_threshold
+                    for tone_density in tone_group_densities)
+                if is_above_threshold == True)
             if len(detectable_fs) != 1:
-                raise ValueError(f'No single detectable frequency above threshold {τ} for powers {ρs}')
+                raise ValueError(f'No single detectable frequency above threshold {percentage_threshold} for powers {tone_group_densities}')
             return detectable_fs[0]
         
-        def coord_to_key(i_row : int, i_col : int) -> str:
-            return (("1", "2", "3"), ("4", "5", "6"), ("7", "8", "9"), ("*", "0", "#"))[i_row][i_col]
+        def coord_to_key(row_tone_index : int, column_tone_index : int) -> str:
+            return self._BASIC_KEY_MATRIX[row_tone_index][column_tone_index]
 
-        p_rows : Sequence[float] = detect_list(self._row_detectors)
-        p_columns : Sequence[float] = detect_list(self._column_detectors)
-        # print(p_rows + p_columns)
-        p_total : float = sum(p_rows + p_columns)
-        ρ_rows : Sequence[int] = calculate_density(p_rows, p_total)
-        ρ_columns : Sequence[int] = calculate_density(p_columns, p_total)
-        # print(ρ_rows + ρ_columns)
+        tone_powers : Sequence[float] = tuple(detector.detect() for detector in self._detectors)
+        total_power : float = sum(tone_powers)
+        tone_densities : Sequence[int] = tuple(
+            int(100*tone_power/total_power)
+            for tone_power in tone_powers)
         return coord_to_key(
-            detectable_frequency(ρ_rows),
-            detectable_frequency(ρ_columns))
+            detectable_frequency(tone_densities[:len(self._ROW_FREQUENCIES)]),
+            detectable_frequency(tone_densities[len(self._ROW_FREQUENCIES):]))
 
 
 if __name__ == "__main__":
